@@ -13,13 +13,14 @@ window.addEventListener('load', function () {
     /* -------------------------------------------------------------------------- */
     form.addEventListener('submit', function (e) {
             e.preventDefault();
+            
             const objetoUsuario= {
             firstName: nombre.value,
             lastName: apellido.value,
             email: correo.value,
             password: password.value
             }
-
+            normalizarTexto(objetoUsuario);
             let settings={
                 method: 'POST',
                 headers: {
@@ -32,7 +33,6 @@ window.addEventListener('load', function () {
 
             form.reset();
     });
-    
     
 
     /* -------------------------------------------------------------------------- */
@@ -52,7 +52,7 @@ window.addEventListener('load', function () {
             })
             .then(function(data){
                 if (data.jwt){
-                    localStorage.setItem("jwt",data.jwt);
+                    localStorage.setItem("jwt", JSON.stringify(data.jwt));
                     location.replace("./mis-tareas.html");
                 };
              })
