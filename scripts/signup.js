@@ -3,7 +3,7 @@ window.addEventListener('load', function () {
     const form= this.document.querySelector("form");
     const nombre= this.document.getElementById("inputNombre");
     const apellido= this.document.getElementById("inputApellido");
-    const correo= this.document.getElementById("inputEmail");
+    const email= this.document.getElementById("inputEmail");
     const password= this.document.getElementById("inputPassword");
     const password2= this.document.getElementById("inputPasswordRepetida");
    
@@ -14,13 +14,14 @@ window.addEventListener('load', function () {
     form.addEventListener('submit', function (e) {
             e.preventDefault();
             
-            const objetoUsuario= {
-            firstName: nombre.value,
-            lastName: apellido.value,
-            email: correo.value,
-            password: password.value
-            }
-            normalizarTexto(objetoUsuario);
+            const objetoUsuario= {}; 
+            validarTexto(nombre.value) ? objetoUsuario.firstName = nombre.value : false;
+            validarTexto(apellido.value) ? objetoUsuario.lastName = apellido.value : false;
+            validarEmail(email.value) ? objetoUsuario.email = email.value : false;
+            validarContrasenia(password.value) && compararContrasenias(password.value,password2.value) ? objetoUsuario.password = password.value : false;
+
+            console.log(objetoUsuario);
+
             let settings={
                 method: 'POST',
                 headers: {
@@ -29,9 +30,9 @@ window.addEventListener('load', function () {
                 body: JSON.stringify(objetoUsuario)
             }
 
-            realizarRegister(settings);
+            // realizarRegister(settings);
 
-            form.reset();
+            // form.reset();
     });
     
 
