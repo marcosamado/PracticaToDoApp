@@ -1,11 +1,11 @@
 window.addEventListener('load', function () {
     /* ---------------------- obtenemos variables globales ---------------------- */
-    const form= this.document.querySelector("form");
-    const nombre= this.document.getElementById("inputNombre");
-    const apellido= this.document.getElementById("inputApellido");
-    const email= this.document.getElementById("inputEmail");
-    const password= this.document.getElementById("inputPassword");
-    const password2= this.document.getElementById("inputPasswordRepetida");
+    const form = document.querySelector("form");
+    const nombre = document.getElementById("inputNombre");
+    const apellido = document.getElementById("inputApellido");
+    const email = document.getElementById("inputEmail");
+    const password = document.getElementById("inputPassword");
+    const password2 = document.getElementById("inputPasswordRepetida");
    
 
     /* -------------------------------------------------------------------------- */
@@ -21,18 +21,21 @@ window.addEventListener('load', function () {
             validarContrasenia(password.value) && compararContrasenias(password.value,password2.value) ? objetoUsuario.password = password.value : false;
 
             console.log(objetoUsuario);
+            if(objetoUsuario.hasOwnProperty("firstName") && objetoUsuario.hasOwnProperty("lastName") && objetoUsuario.hasOwnProperty("email") && objetoUsuario.hasOwnProperty("password")){
+                let settings = {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(objetoUsuario)
+                }
 
-            let settings={
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(objetoUsuario)
+                realizarRegister(settings);
+
+                form.reset();
+            }else {
+                alert("Los datos que ingresaste NO SON VALIDOS!")
             }
-
-            // realizarRegister(settings);
-
-            // form.reset();
     });
     
 
