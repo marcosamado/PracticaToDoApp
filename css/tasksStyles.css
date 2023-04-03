@@ -105,6 +105,11 @@ main h2 {
 }
 
 /* ------------Tareas pendientes */
+ul {
+    padding: 0.5%;
+    height: 450px;
+    overflow: scroll;
+}
 .tareas-pendientes .tarea {
     background-color: var(--app-grey);
     margin-bottom: .7rem;
@@ -114,6 +119,7 @@ main h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    overflow: hidden;
 }
 
 .tareas-pendientes .tarea i {

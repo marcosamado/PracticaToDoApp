@@ -18,7 +18,9 @@ window.addEventListener('load', function () {
   const key = localStorage.getItem("jwt");
   
   obtenerNombreUsuario();
-  consultarTareas();
+  consultarTareas(); 
+
+  
   /* -------------------------------------------------------------------------- */
   /*                          FUNCIÓN 1 - Cerrar sesión                         */
   /* -------------------------------------------------------------------------- */
@@ -87,12 +89,10 @@ window.addEventListener('load', function () {
         
     fetch("https://todo-api.ctd.academy/v1/tasks", settings)
       .then(response => {
-        // console.log(response);
         return response.json();
       })
       .then(data => {
         renderizarTareas(data);
-        // tareaPendiente.inner.HTML += `<li>${data}`
       })
       .catch(error => {
         return error;
@@ -135,6 +135,8 @@ window.addEventListener('load', function () {
         return error;
       })
 
+      consultarTareas();
+      formCrearTarea.reset();
   });
 
 
@@ -142,7 +144,7 @@ window.addEventListener('load', function () {
   /*                  FUNCIÓN 5 - Renderizar tareas en pantalla                 */
   /* -------------------------------------------------------------------------- */
   function renderizarTareas(listado) {
-    
+    tareaPendiente.innerHTML = "";
     listado.forEach(tarea => {
       tareaPendiente.innerHTML += 
       `<li class="tarea">
@@ -158,18 +160,25 @@ window.addEventListener('load', function () {
         </li>`
     });
 
+
   };
 
   /* -------------------------------------------------------------------------- */
   /*                  FUNCIÓN 6 - Cambiar estado de tarea [PUT]                 */
   /* -------------------------------------------------------------------------- */
-  // function botonesCambioEstado() {
+  function botonesCambioEstado() {
     
+    tareaPendiente.addEventListener("click", (event) => {
+      if(event.target.classList.contains("change")){
+        console.log(event.target);
+      }
+    })
     
 
 
 
-  // }
+  }
+  botonesCambioEstado();
 
 
   /* -------------------------------------------------------------------------- */
