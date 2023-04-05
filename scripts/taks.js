@@ -13,14 +13,13 @@ window.addEventListener('load', function () {
   const nuevaTarea = document.getElementById("nuevaTarea");
   const tareaPendiente = document.querySelector(".tareas-pendientes");
   const tareaCompletada = document.querySelector(".tareas-terminadas");
-  
+  const contadorTareas = document.getElementById("cantidad-finalizadas");
   
   const key = localStorage.getItem("jwt");
   
   obtenerNombreUsuario();
   consultarTareas(); 
-
-  botonesCambioEstado();
+  // botonesCambioEstado();
 
 
   
@@ -96,6 +95,7 @@ window.addEventListener('load', function () {
       })
       .then(data => {
         renderizarTareas(data);
+        botonesCambioEstado();
       })
       .catch(error => {
         return error;
@@ -149,8 +149,10 @@ window.addEventListener('load', function () {
   function renderizarTareas(listado) {
     tareaPendiente.innerHTML = "";
     tareaCompletada.innerHTML = "";
+    let contadorTarea= 0;
     listado.forEach(tarea => {
       if(tarea.completed){
+        contadorTareas.innerHTML = contadorTarea;
         tareaCompletada.innerHTML += `
         <li class="tarea">
           <div class="hecha">
@@ -165,7 +167,7 @@ window.addEventListener('load', function () {
           </div>
         </li>
                       `
-
+        contadorTarea++;
       }else{
         tareaPendiente.innerHTML += 
         `<li class="tarea">
@@ -195,7 +197,7 @@ window.addEventListener('load', function () {
         let idTarea = event.target.id;
 
         let settings = {
-          metohd: "GET",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
             "authorization": JSON.parse(key)
@@ -207,7 +209,9 @@ window.addEventListener('load', function () {
             return response.json();
           })
           .then(data => {
-            completarTarea(data,true);
+            console.log(data)
+            completarTarea(data, true);
+            botonBorrarTarea();
             consultarTareas();
           })
         };
@@ -216,11 +220,11 @@ window.addEventListener('load', function () {
   }
 
 
-  function completarTarea(tarea, completed) {
+  function completarTarea(tarea,condicion) {
 
     let tareaAModificar = {
       description: tarea.description,
-      completed: completed
+      completed: condicion
     };
 
     let settings = {
@@ -234,7 +238,7 @@ window.addEventListener('load', function () {
             
     fetch(`https://todo-api.ctd.academy/v1/tasks/${tarea.id}`, settings)
     .then(response => {
-      console.log(response);
+      // console.log(response);
       return response.json();
     })
     .then(data => {
@@ -248,12 +252,34 @@ window.addEventListener('load', function () {
   /*                     FUNCIÓN 7 - Eliminar tarea [DELETE]                    */
   /* -------------------------------------------------------------------------- */
   function botonBorrarTarea() {
+    tareaCompletada.addEventListener("click", (event)=> {
+      if(event.target.classList.contains("incompleta")){
+        
+        let idTarea = event.target.id;
 
+        let settings = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "authorization": JSON.parse(key)
+          }
+        }
 
-    
-
-    
-
+        fetch(`https://todo-api.ctd.academy/v1/tasks/${idTarea}`, settings)
+          .then(response => {
+            return response.json();
+          })
+          .then(data => {
+            console.log(data)
+            completarTarea(data, false);
+            consultarTareas();
+            
+          })
+      }
+    })
   };
+  
+  
+  botonBorrarTarea();
 
 });
