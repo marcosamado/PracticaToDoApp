@@ -12,13 +12,16 @@ window.addEventListener('load', function () {
   const formCrearTarea = document.querySelector("form");
   const nuevaTarea = document.getElementById("nuevaTarea");
   const tareaPendiente = document.querySelector(".tareas-pendientes");
-  const tareaTerminada = document.querySelector(".tarea-terminadas");
+  const tareaCompletada = document.querySelector(".tareas-terminadas");
   
   
   const key = localStorage.getItem("jwt");
   
   obtenerNombreUsuario();
   consultarTareas(); 
+
+  botonesCambioEstado();
+
 
   
   /* -------------------------------------------------------------------------- */
@@ -130,12 +133,12 @@ window.addEventListener('load', function () {
       })
       .then(data => {
         console.log(data);
+        consultarTareas();
       })
       .catch(error => {
         return error;
       })
-
-      consultarTareas();
+      
       formCrearTarea.reset();
   });
 
@@ -145,51 +148,112 @@ window.addEventListener('load', function () {
   /* -------------------------------------------------------------------------- */
   function renderizarTareas(listado) {
     tareaPendiente.innerHTML = "";
+    tareaCompletada.innerHTML = "";
     listado.forEach(tarea => {
-      tareaPendiente.innerHTML += 
-      `<li class="tarea">
-                                  
-        <button class="change" id="${tarea.id}"><i class="fa-regular fa-circle"></i></button>
-                                  
-        <div class="descripcion">
-                                  
-        <p class="nombre">${tarea.description}</p>
-                                  
-        </div>
-                                  
-        </li>`
-    });
+      if(tarea.completed){
+        tareaCompletada.innerHTML += `
+        <li class="tarea">
+          <div class="hecha">
+            <i class="fa-regular fa-circle-check"></i>
+          </div>
+          <div class="descripcion">
+            <p class="nombre">${tarea.description}</p>
+            <div class="cambios-estados">
+              <button class="change incompleta" id="${tarea.id}" ><i class="fa-solid fa-rotate-left"></i></button>
+              <button class="borrar" id="${tarea.id}"><i class="fa-regular fa-trash-can"></i></button>
+            </div>
+          </div>
+        </li>
+                      `
 
-
+      }else{
+        tareaPendiente.innerHTML += 
+        `<li class="tarea">
+                                    
+          <button class="change" id="${tarea.id}"><i class="fa-regular fa-circle"></i></button>
+                                    
+          <div class="descripcion">
+                                    
+          <p class="nombre">${tarea.description}</p>
+                                    
+          </div>
+                                    
+          </li>`
+        }
+      });
+    
   };
 
   /* -------------------------------------------------------------------------- */
   /*                  FUNCIÓN 6 - Cambiar estado de tarea [PUT]                 */
   /* -------------------------------------------------------------------------- */
   function botonesCambioEstado() {
-    
+
     tareaPendiente.addEventListener("click", (event) => {
       if(event.target.classList.contains("change")){
-        console.log(event.target);
-      }
-    })
-    
+        
+        let idTarea = event.target.id;
 
+        let settings = {
+          metohd: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "authorization": JSON.parse(key)
+          }
+        }
 
+        fetch(`https://todo-api.ctd.academy/v1/tasks/${idTarea}`, settings)
+          .then(response => {
+            return response.json();
+          })
+          .then(data => {
+            completarTarea(data,true);
+            consultarTareas();
+          })
+        };
 
+    });
   }
-  botonesCambioEstado();
+
+
+  function completarTarea(tarea, completed) {
+
+    let tareaAModificar = {
+      description: tarea.description,
+      completed: completed
+    };
+
+    let settings = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": JSON.parse(key)
+      },
+      body: JSON.stringify(tareaAModificar)
+    }
+            
+    fetch(`https://todo-api.ctd.academy/v1/tasks/${tarea.id}`, settings)
+    .then(response => {
+      console.log(response);
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+    })
+  };
+
 
 
   /* -------------------------------------------------------------------------- */
   /*                     FUNCIÓN 7 - Eliminar tarea [DELETE]                    */
   /* -------------------------------------------------------------------------- */
-  // function botonBorrarTarea() {
-   
-    
+  function botonBorrarTarea() {
+
 
     
 
-  // };
+    
+
+  };
 
 });
