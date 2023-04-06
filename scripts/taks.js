@@ -1,6 +1,8 @@
 // SEGURIDAD: Si no se encuentra en localStorage info del usuario
 // no lo deja acceder a la página, redirigiendo al login inmediatamente.
-
+if (!localStorage.jwt) {
+  location.replace('./index.html');
+}
 
 
 /* ------ comienzan las funcionalidades una vez que carga el documento ------ */
@@ -19,7 +21,7 @@ window.addEventListener('load', function () {
   
   obtenerNombreUsuario();
   consultarTareas(); 
-  // botonesCambioEstado();
+
 
 
   
@@ -96,6 +98,7 @@ window.addEventListener('load', function () {
       .then(data => {
         renderizarTareas(data);
         botonesCambioEstado();
+        botonBorrarTarea();
       })
       .catch(error => {
         return error;
@@ -128,11 +131,9 @@ window.addEventListener('load', function () {
 
     fetch("https://todo-api.ctd.academy/v1/tasks", settings)
       .then(response => {
-        console.log(response);
         return response.json();
       })
       .then(data => {
-        console.log(data);
         consultarTareas();
       })
       .catch(error => {
@@ -151,6 +152,7 @@ window.addEventListener('load', function () {
     tareaCompletada.innerHTML = "";
     let contadorTarea= 0;
     listado.forEach(tarea => {
+      let fecha = new Date(tarea.createdAt);
       if(tarea.completed){
         contadorTareas.innerHTML = contadorTarea;
         tareaCompletada.innerHTML += `
@@ -177,7 +179,7 @@ window.addEventListener('load', function () {
           <div class="descripcion">
                                     
           <p class="nombre">${tarea.description}</p>
-                                    
+          <p class="timestamp">${fecha.toLocaleDateString()}</p>                          
           </div>
                                     
           </li>`
@@ -192,8 +194,8 @@ window.addEventListener('load', function () {
   function botonesCambioEstado() {
 
     tareaPendiente.addEventListener("click", (event) => {
+      event.stopImmediatePropagation();
       if(event.target.classList.contains("change")){
-        
         let idTarea = event.target.id;
 
         let settings = {
@@ -211,9 +213,11 @@ window.addEventListener('load', function () {
           .then(data => {
             console.log(data)
             completarTarea(data, true);
-            botonBorrarTarea();
             consultarTareas();
+            console.log(data);
           })
+
+          
         };
 
     });
@@ -223,7 +227,7 @@ window.addEventListener('load', function () {
   function completarTarea(tarea,condicion) {
 
     let tareaAModificar = {
-      description: tarea.description,
+      // description: tarea.description,
       completed: condicion
     };
 
@@ -242,7 +246,7 @@ window.addEventListener('load', function () {
       return response.json();
     })
     .then(data => {
-      console.log(data);
+      return data;
     })
   };
 
@@ -253,8 +257,8 @@ window.addEventListener('load', function () {
   /* -------------------------------------------------------------------------- */
   function botonBorrarTarea() {
     tareaCompletada.addEventListener("click", (event)=> {
+      event.stopImmediatePropagation();
       if(event.target.classList.contains("incompleta")){
-        
         let idTarea = event.target.id;
 
         let settings = {
@@ -267,6 +271,7 @@ window.addEventListener('load', function () {
 
         fetch(`https://todo-api.ctd.academy/v1/tasks/${idTarea}`, settings)
           .then(response => {
+            console.log(response)
             return response.json();
           })
           .then(data => {
@@ -278,7 +283,6 @@ window.addEventListener('load', function () {
       }
     })
   };
-  
   
   botonBorrarTarea();
 
