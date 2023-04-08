@@ -16,12 +16,14 @@ window.addEventListener('load', function () {
   const tareasGeneral = document.querySelector("main");
   const tareaPendiente = document.querySelector(".tareas-pendientes");
   const tareaCompletada = document.querySelector(".tareas-terminadas");
+  // const tareaEliminar = document.querySelector(".borrar");
   const contadorTareas = document.getElementById("cantidad-finalizadas");
   
   const key = localStorage.getItem("jwt");
   
   obtenerNombreUsuario();
   consultarTareas(); 
+  botonBorrarTarea();
 
 
 
@@ -129,7 +131,7 @@ window.addEventListener('load', function () {
       },
       body: JSON.stringify(tarea)
     };
-
+    
     fetch("https://todo-api.ctd.academy/v1/tasks", settings)
       .then(response => {
         return response.json();
@@ -225,6 +227,9 @@ window.addEventListener('load', function () {
           console.log(data);
           consultarTareas();
         })
+        .catch(error =>{
+          console.log(error)
+        })
 
       };
     });
@@ -236,35 +241,34 @@ window.addEventListener('load', function () {
   /* -------------------------------------------------------------------------- */
   /*                     FUNCIÓN 7 - Eliminar tarea [DELETE]                    */
   /* -------------------------------------------------------------------------- */
-  // function botonBorrarTarea() {
-  //   tareaCompletada.addEventListener("click", (event)=> {
-  //     event.stopImmediatePropagation();
-  //     if(event.target.classList.contains("incompleta")){
-  //       let idTarea = event.target.id;
+  function botonBorrarTarea() {
+    
+    tareasGeneral.addEventListener("click", (event) => {
+      if(event.target.classList.contains("borrar")){
 
-  //       let settings = {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "authorization": JSON.parse(key)
-  //         }
-  //       }
+        let idTarea = event.target.id;
 
-  //       fetch(`https://todo-api.ctd.academy/v1/tasks/${idTarea}`, settings)
-  //         .then(response => {
-  //           console.log(response)
-  //           return response.json();
-  //         })
-  //         .then(data => {
-  //           console.log(data)
-  //           completarTarea(data, false);
-  //           consultarTareas();
-            
-  //         })
-  //     }
-  //   })
-  // };
+        let settings = {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "authorization": JSON.parse(key)
+          }
+        };
+
+        fetch(`https://todo-api.ctd.academy/v1/tasks/${idTarea}`, settings)
+          .then(response => {
+            return response.json();
+          })
+          .then(data => {
+            console.log(data);
+            consultarTareas();
+          })
+          .catch(error =>{
+            console.log(error)
+          })
+      }
+    })
+  };
   
-  // botonBorrarTarea();
-
 });

@@ -10,7 +10,7 @@ window.addEventListener('load', function () {
     /*            FUNCIÓN 1: Escuchamos el submit y preparamos el envío           */
     /* -------------------------------------------------------------------------- */
     form.addEventListener('submit', function (event) {
-       
+    
         event.preventDefault();
 
         let obtenerUsuario= {}
@@ -44,7 +44,7 @@ window.addEventListener('load', function () {
     /*                     FUNCIÓN 2: Realizar el login [POST]                    */
     /* -------------------------------------------------------------------------- */
     function realizarLogin(settings) {
-       
+    
         fetch("https://todo-api.ctd.academy/v1/users/login", settings)
         .then(response => {
             if(!response.ok){

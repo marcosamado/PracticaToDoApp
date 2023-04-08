@@ -6,7 +6,7 @@ window.addEventListener('load', function () {
     const email = document.getElementById("inputEmail");
     const password = document.getElementById("inputPassword");
     const password2 = document.getElementById("inputPasswordRepetida");
-   
+
 
     /* -------------------------------------------------------------------------- */
     /*            FUNCIÓN 1: Escuchamos el submit y preparamos el envío           */
@@ -59,10 +59,10 @@ window.addEventListener('load', function () {
                     localStorage.setItem("jwt", JSON.stringify(data.jwt));
                     location.replace("./mis-tareas.html");
                 };
-             })
-             .catch(function(e){
+            })
+            .catch(function(e){
                     console.log("Error" + e);
-             })
+            })
 
     };
 
